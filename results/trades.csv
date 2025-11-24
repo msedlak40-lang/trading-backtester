@@ -1,0 +1,2 @@
+entry_time,entry_price,direction,size,stop,target,exit_time,exit_price,exit_reason,pnl,bars_in_trade
+2025-09-18 14:12:00,24745.75,SHORT,30,24758.79,24732.71,2025-09-18 14:12:00,24758.79,STOP,-1956.000000000131,0

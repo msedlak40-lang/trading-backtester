@@ -1,0 +1,45 @@
+# Backtesting Configuration
+
+# Data files
+data:
+  nq_file: "MNQ 12-25.Last.txt"  # NQ futures data
+  stock_files:
+    - "AAPL.Last.txt"
+    - "MSFT.Last.txt"
+    - "TSLA.Last.txt"
+    - "META.Last.txt"
+    - "AMZN.Last.txt"
+    - "GOOGL.Last.txt"
+    - "NVDA.Last.txt"
+
+# Zone21B Indicator Settings
+zone21b:
+  lookback: 4  # Bars to look back for swing high/low calculation
+  required_closes: 2  # Number of closes above zeta/below alpha to activate zone
+
+# ATR Bar Detector Settings
+atr_bar:
+  period: 7  # ATR period
+  multiple: 0.75  # ATR multiple for threshold
+
+# Entry Signal Settings
+entry:
+  max_bars_after_swing: 2  # Max bars after new swing to find ATR bar
+  opposite_atr_lookback: 20  # Bars to look back for opposite ATR bar target
+
+# Position Management
+instrument:
+  tick_size: 0.25  # MES tick size
+  tick_value: 1.25  # Dollar value per tick
+
+account:
+  initial_size: 100000  # Starting capital
+  risk_percent: 2.0  # Risk per trade as % of account
+
+# Output Settings
+output:
+  trades_file: "results/trades.csv"
+  equity_file: "results/equity_curve.csv"
+  statistics_file: "results/statistics.json"
+  print_trades: true
+  print_summary: true

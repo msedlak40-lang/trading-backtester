@@ -1,0 +1,15 @@
+{
+  "total_trades": 1,
+  "winning_trades": 0,
+  "losing_trades": 1,
+  "win_rate": 0.0,
+  "total_pnl": -1956.000000000131,
+  "avg_win": 0,
+  "avg_loss": -1956.000000000131,
+  "profit_factor": 0.0,
+  "max_drawdown": 1956.000000000131,
+  "max_drawdown_pct": 1.956000000000131,
+  "final_equity": 98043.99999999987,
+  "return_pct": -1.956000000000131,
+  "avg_bars_in_trade": 0.0
+}
