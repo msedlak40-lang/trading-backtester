@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trading Backtester - Chart Viewer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #333;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 30px;
+            background: #f8f9fa;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            color: #6c757d;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        nav {
+            background: #343a40;
+            padding: 15px 30px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        nav button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        nav button:hover {
+            background: #764ba2;
+            transform: scale(1.05);
+        }
+
+        nav button.active {
+            background: #28a745;
+        }
+
+        .chart-section {
+            padding: 30px;
+        }
+
+        .chart-container {
+            margin-bottom: 40px;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .chart-title {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            color: #343a40;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .chart-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-label {
+            font-size: 0.85em;
+            color: #6c757d;
+            margin-bottom: 4px;
+        }
+
+        .info-value {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #343a40;
+        }
+
+        .chart-image {
+            width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .chart-image:hover {
+            transform: scale(1.02);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            max-width: 95%;
+            max-height: 95%;
+        }
+
+        .close {
+            position: absolute;
+            top: 20px;
+            right: 40px;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .scroll-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #667eea;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            display: none;
+            transition: all 0.3s;
+        }
+
+        .scroll-top:hover {
+            background: #764ba2;
+            transform: scale(1.1);
+        }
+
+        .divergence-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .bearish {
+            background: #dc3545;
+            color: white;
+        }
+
+        .bullish {
+            background: #28a745;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📊 Trading Backtester - Chart Viewer</h1>
+            <p class="subtitle">Divergence Trading Strategy Analysis</p>
+        </header>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-label">Total Divergences</div>
+                <div class="stat-value" id="total-divergences">11</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Trades Executed</div>
+                <div class="stat-value" id="total-trades">1</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Win Rate</div>
+                <div class="stat-value" id="win-rate">0%</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total P&L</div>
+                <div class="stat-value" id="total-pnl">-$1,956</div>
+            </div>
+        </div>
+
+        <nav>
+            <button onclick="showAll()" class="active" id="btn-all">All Charts</button>
+            <button onclick="showSummary()" id="btn-summary">Summary Only</button>
+            <button onclick="showDivergences()" id="btn-divergences">Divergences Only</button>
+            <button onclick="showWithTrades()" id="btn-trades">With Trades Only</button>
+        </nav>
+
+        <div class="chart-section">
+            <!-- Summary Chart -->
+            <div class="chart-container" data-type="summary">
+                <h2 class="chart-title">📈 Summary - Full Backtest Period</h2>
+                <div class="chart-info">
+                    <div class="info-item">
+                        <span class="info-label">Date Range</span>
+                        <span class="info-value">Sep 15 - Nov 21, 2025</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Total Bars</span>
+                        <span class="info-value">24,346</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Description</span>
+                        <span class="info-value">Complete overview with all divergences</span>
+                    </div>
+                </div>
+                <img src="results/charts/summary.png" alt="Summary Chart" class="chart-image" onclick="openModal(this)">
+            </div>
+
+            <!-- Divergence Charts -->
+            <div class="chart-container" data-type="divergence">
+                <h2 class="chart-title">Divergence #1 - Sep 15, 12:05 <span class="divergence-badge bearish">BEARISH</span></h2>
+                <div class="chart-info">
+                    <div class="info-item">
+                        <span class="info-label">NQ Close</span>
+                        <span class="info-value">24392.25</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">NQ Swing High</span>
+                        <span class="info-value">24389.00</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Result</span>
+                        <span class="info-value">No ATR bar</span>
+                    </div>
+                </div>
+                <img src="results/charts/div_01_20250915_1205_BEARISH.png" alt="Divergence 1" class="chart-image" onclick="openModal(this)">
+            </div>
+
+            <div class="chart-container" data-type="divergence">
+                <h2 class="chart-title">Divergence #2 - Sep 15, 12:24 <span class="divergence-badge bearish">BEARISH</span></h2>
+                <div class="chart-info">
+                    <div class="info-item">
+                        <span class="info-label">NQ Close</span>
+                        <span class="info-value">24412.75</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">NQ Swing High</span>
+                        <span class="info-value">24404.00</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Result</span>
+                        <span class="info-value">No ATR bar</span>
+                    </div>
+                </div>
+                <img src="results/charts/div_02_20250915_1224_BEARISH.png" alt="Divergence 2" class="chart-image" onclick="openModal(this)">
+            </div>
+
+            <div class="chart-container" data-type="divergence">
+                <h2 class="chart-title">Divergence #3 - Sep 15, 13:31 <span class="divergence-badge bearish">BEARISH</span></h2>
+                <div class="chart-info">
+                    <div class="info-item">
+                        <span class="info-label">NQ Close</span>
+                        <span class="info-value">24430.25</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">NQ Swing High</span>
+                        <span class="info-value">24423.25</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Result</span>
+                        <span class="info-value">No ATR bar</span>
+                    </div>
+                </div>
+                <img src="results/charts/div_03_20250915_1331_BEARISH.png" alt="Divergence 3" class="chart-image" onclick="openModal(this)">
+            </div>
+
+            <div class="chart-container" data-type="divergence">
+                <h2 class="chart-title">Divergence #4 - Sep 15, 13:50 <span class="divergence-badge bearish">BEARISH</span></h2>
+                <div class="chart-info">
+                    <div class="info-item">
+                        <span class="info-label">NQ Close</span>
+                        <span class="info-value">24470.75</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">NQ Swing High</span>
+                        <span class="info-value">24470.50</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Result</span>
+                        <span class="info-value">No ATR bar</span>
+                    </div>
+                </div>
+                <img src="results/charts/div_04_20250915_1350_BEARISH.png" alt="Divergence 4" class="chart-image" onclick="openModal(this)">
+            </div>
+
+            <div class="chart-container" data-type="divergence">
+                <h2 class="chart-title">Divergence #5 - Sep 15, 13:59 <span class="divergence-badge bearish">BEARISH</span></h2>
+                <div class="chart-info">
+                    <div class="info-item">
+                        <span class="info-label">NQ Close</span>
+                        <span class="info-value">24497.50</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">NQ Swing High</span>
+                        <span class="info-value">24492.75</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Result</span>
+                        <span class="info-value">No ATR bar</span>
+                    </div>
+                </div>
+                <img src="results/charts/div_05_20250915_1359_BEARISH.png" alt="Divergence 5" class="chart-image" onclick="openModal(this)">
+            </div>
+
+            <div class="chart-container" data-type="divergence">
+                <h2 class="chart-title">Divergence #6 - Sep 15, 15:57 <span class="divergence-badge bearish">BEARISH</span></h2>
+                <div class="chart-info">
+                    <div class="info-item">
+                        <span class="info-label">NQ Close</span>
+                        <span class="info-value">24525.25</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">NQ Swing High</span>
+                        <span class="info-value">24524.25</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Result</span>
+                        <span class="info-value">No ATR bar</span>
+                    </div>
+                </div>
+                <img src="results/charts/div_06_20250915_1557_BEARISH.png" alt="Divergence 6" class="chart-image" onclick="openModal(this)">
+            </div>
+
+            <div class="chart-container" data-type="divergence">
+                <h2 class="chart-title">Divergence #7 - Sep 15, 19:48 <span class="divergence-badge bearish">BEARISH</span></h2>
+                <div class="chart-info">
+                    <div class="info-item">
+                        <span class="info-label">NQ Close</span>
+                        <span class="info-value">24532.00</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">NQ Swing High</span>
+                        <span class="info-value">24531.50</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Result</span>
+                        <span class="info-value">No ATR bar</span>
+                    </div>
+                </div>
+                <img src="results/charts/div_07_20250915_1948_BEARISH.png" alt="Divergence 7" class="chart-image" onclick="openModal(this)">
+            </div>
+
+            <div class="chart-container" data-type="divergence">
+                <h2 class="chart-title">Divergence #8 - Sep 15, 19:58 <span class="divergence-badge bearish">BEARISH</span></h2>
+                <div class="chart-info">
+                    <div class="info-item">
+                        <span class="info-label">NQ Close</span>
+                        <span class="info-value">24543.25</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">NQ Swing High</span>
+                        <span class="info-value">24535.50</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Result</span>
+                        <span class="info-value">No ATR bar</span>
+                    </div>
+                </div>
+                <img src="results/charts/div_08_20250915_1958_BEARISH.png" alt="Divergence 8" class="chart-image" onclick="openModal(this)">
+            </div>
+
+            <div class="chart-container" data-type="divergence">
+                <h2 class="chart-title">Divergence #9 - Sep 18, 08:30 <span class="divergence-badge bearish">BEARISH</span></h2>
+                <div class="chart-info">
+                    <div class="info-item">
+                        <span class="info-label">NQ Close</span>
+                        <span class="info-value">24693.00</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">NQ Swing High</span>
+                        <span class="info-value">24627.00</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Result</span>
+                        <span class="info-value">No ATR bar</span>
+                    </div>
+                </div>
+                <img src="results/charts/div_09_20250918_0830_BEARISH.png" alt="Divergence 9" class="chart-image" onclick="openModal(this)">
+            </div>
+
+            <div class="chart-container" data-type="divergence">
+                <h2 class="chart-title">Divergence #10 - Sep 18, 11:18 <span class="divergence-badge bearish">BEARISH</span></h2>
+                <div class="chart-info">
+                    <div class="info-item">
+                        <span class="info-label">NQ Close</span>
+                        <span class="info-value">24742.25</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">NQ Swing High</span>
+                        <span class="info-value">24735.50</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Result</span>
+                        <span class="info-value">No ATR bar</span>
+                    </div>
+                </div>
+                <img src="results/charts/div_10_20250918_1118_BEARISH.png" alt="Divergence 10" class="chart-image" onclick="openModal(this)">
+            </div>
+
+            <div class="chart-container" data-type="divergence trade">
+                <h2 class="chart-title">Divergence #11 - Sep 18, 14:11 <span class="divergence-badge bearish">BEARISH</span> <span class="divergence-badge" style="background:#ffc107;color:#000">⭐ TRADE</span></h2>
+                <div class="chart-info">
+                    <div class="info-item">
+                        <span class="info-label">NQ Close</span>
+                        <span class="info-value">24758.50</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Entry</span>
+                        <span class="info-value">SHORT @ 24745.75</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Exit</span>
+                        <span class="info-value">STOP @ 24758.79</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">P&L</span>
+                        <span class="info-value" style="color:#dc3545">-$1,956</span>
+                    </div>
+                </div>
+                <img src="results/charts/div_11_20250918_1411_BEARISH.png" alt="Divergence 11 - Trade" class="chart-image" onclick="openModal(this)">
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for enlarged view -->
+    <div id="imageModal" class="modal" onclick="closeModal()">
+        <span class="close">&times;</span>
+        <img class="modal-content" id="modalImage">
+    </div>
+
+    <!-- Scroll to top button -->
+    <button class="scroll-top" id="scrollTop" onclick="scrollToTop()">↑</button>
+
+    <script>
+        // Filter functions
+        function showAll() {
+            document.querySelectorAll('.chart-container').forEach(el => el.classList.remove('hidden'));
+            setActiveButton('btn-all');
+        }
+
+        function showSummary() {
+            document.querySelectorAll('.chart-container').forEach(el => {
+                if (el.dataset.type === 'summary') {
+                    el.classList.remove('hidden');
+                } else {
+                    el.classList.add('hidden');
+                }
+            });
+            setActiveButton('btn-summary');
+        }
+
+        function showDivergences() {
+            document.querySelectorAll('.chart-container').forEach(el => {
+                if (el.dataset.type.includes('divergence')) {
+                    el.classList.remove('hidden');
+                } else {
+                    el.classList.add('hidden');
+                }
+            });
+            setActiveButton('btn-divergences');
+        }
+
+        function showWithTrades() {
+            document.querySelectorAll('.chart-container').forEach(el => {
+                if (el.dataset.type.includes('trade') || el.dataset.type === 'summary') {
+                    el.classList.remove('hidden');
+                } else {
+                    el.classList.add('hidden');
+                }
+            });
+            setActiveButton('btn-trades');
+        }
+
+        function setActiveButton(btnId) {
+            document.querySelectorAll('nav button').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(btnId).classList.add('active');
+        }
+
+        // Modal functions
+        function openModal(img) {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImage');
+            modal.style.display = 'flex';
+            modalImg.src = img.src;
+        }
+
+        function closeModal() {
+            document.getElementById('imageModal').style.display = 'none';
+        }
+
+        // Scroll to top
+        window.onscroll = function() {
+            const scrollBtn = document.getElementById('scrollTop');
+            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+                scrollBtn.style.display = 'block';
+            } else {
+                scrollBtn.style.display = 'none';
+            }
+        };
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -2,6 +2,46 @@
 
 A complete backtesting system for a divergence trading strategy using Zone21B indicator and ATR bars.
 
+## 🚀 Quick Start
+
+### Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/msedlak40-lang/trading-backtester.git
+cd trading-backtester
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Run the backtest
+python main.py
+```
+
+### 📊 Viewing Charts
+
+After running the backtest, **open `view_charts.html` in your web browser** to interactively browse all charts:
+
+```bash
+# On Windows
+start view_charts.html
+
+# On Mac
+open view_charts.html
+
+# On Linux
+xdg-open view_charts.html
+```
+
+**Features of the Chart Viewer:**
+- 📈 Interactive filtering (All / Summary / Divergences / Trades)
+- 🔍 Click any chart to zoom in
+- ⬆️ Scroll-to-top button for easy navigation
+- 📱 Responsive design works on any device
+- ⌨️ Press ESC to close zoomed images
+
+All charts are also available as PNG files in `results/charts/`.
+
 ## Overview
 
 This system implements a sophisticated trading strategy that:
