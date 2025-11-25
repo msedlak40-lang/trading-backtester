@@ -22,17 +22,15 @@ def main():
 
     # Extract configuration
     data_config = config['data']
-    zone21_config = config['indicators']['zone21b']
-    atr_config = config['indicators']['atr_bar']
+    zone21_config = config['zone21b']
+    atr_config = config['atr_bar']
 
     # Load data
     print("\nLoading market data...")
-    loader = DataLoader()
+    loader = DataLoader(base_path='data')
     nq_bars, composite_bars = loader.load_all_data(
-        data_dir=data_config['data_dir'],
         nq_file=data_config['nq_file'],
-        stock_files=data_config['stock_files'],
-        stock_order=data_config['stock_order']
+        stock_files=data_config['stock_files']
     )
 
     print(f"\nLoaded data:")
