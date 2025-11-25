@@ -41,5 +41,13 @@ output:
   trades_file: "results/trades.csv"
   equity_file: "results/equity_curve.csv"
   statistics_file: "results/statistics.json"
+  divergence_log: "results/divergence_log.csv"
   print_trades: true
   print_summary: true
+
+# Debug Settings
+debug:
+  show_divergences: true       # Show when divergences are detected
+  show_swing_updates: false    # Show swing high/low updates
+  show_atr_bars: false         # Show all ATR bars detected
+  show_zone_activations: false # Show zone activations

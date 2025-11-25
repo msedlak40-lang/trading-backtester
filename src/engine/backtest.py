@@ -419,3 +419,7 @@ class Backtester:
             for i, equity in enumerate(self.equity_curve):
                 f.write(f"{i},{equity}\n")
         print(f"Equity curve saved to: {equity_file}")
+
+        # Save divergence log
+        divergence_file = self.config['output']['divergence_log']
+        self.signal_generator.save_divergence_log(divergence_file)
