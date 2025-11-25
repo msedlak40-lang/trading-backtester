@@ -18,27 +18,40 @@ pip install -r requirements.txt
 python main.py
 ```
 
-### 📊 Viewing Charts
+### 📊 Viewing Charts - Interactive Application
 
-After running the backtest, **open `view_charts.html` in your web browser** to interactively browse all charts:
+**Launch the interactive chart viewer** (RECOMMENDED):
 
 ```bash
-# On Windows
-start view_charts.html
-
-# On Mac
-open view_charts.html
-
-# On Linux
-xdg-open view_charts.html
+python view_charts_interactive.py
 ```
 
-**Features of the Chart Viewer:**
-- 📈 Interactive filtering (All / Summary / Divergences / Trades)
-- 🔍 Click any chart to zoom in
-- ⬆️ Scroll-to-top button for easy navigation
-- 📱 Responsive design works on any device
-- ⌨️ Press ESC to close zoomed images
+**Features:**
+- 🎮 Navigate with buttons or keyboard (←/→ arrows)
+- 📊 Live updating charts as you scroll through divergences
+- 🔍 Zoom in/out with context slider (10-500 bars)
+- 📈 See NQ and Composite side-by-side
+- 💡 Real-time divergence and trade markers
+- ⚡ Instant navigation - no waiting for images to load
+
+**Controls:**
+- `→` or `N` = Next divergence
+- `←` or `P` = Previous divergence
+- `Home/End` = Jump to first/last
+- `Q` = Quit
+- Slider = Adjust zoom level
+
+See [INTERACTIVE_VIEWER_GUIDE.md](INTERACTIVE_VIEWER_GUIDE.md) for complete guide.
+
+### Alternative: Web-Based Chart Viewer
+
+Or open `view_charts.html` in your web browser for static charts:
+
+```bash
+# On Windows: start view_charts.html
+# On Mac: open view_charts.html
+# On Linux: xdg-open view_charts.html
+```
 
 All charts are also available as PNG files in `results/charts/`.
 

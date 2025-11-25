@@ -60,3 +60,4 @@ visualization:
   output_dir: "results/charts"         # Chart output directory
   bars_before_divergence: 100          # Bars to show before divergence
   bars_after_divergence: 100           # Bars to show after divergence
+  launch_interactive: false            # Auto-launch interactive viewer after backtest
