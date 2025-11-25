@@ -423,3 +423,55 @@ class Backtester:
         # Save divergence log
         divergence_file = self.config['output']['divergence_log']
         self.signal_generator.save_divergence_log(divergence_file)
+
+        # Generate charts if enabled
+        if self.config.get('visualization', {}).get('enabled', False):
+            self.generate_charts()
+
+    def generate_charts(self) -> None:
+        """Generate visualization charts for divergences and trades."""
+        from src.visualization.charts import ChartVisualizer
+        import os
+
+        viz_config = self.config.get('visualization', {})
+        output_dir = viz_config.get('output_dir', 'results/charts')
+        os.makedirs(output_dir, exist_ok=True)
+
+        print("\n" + "=" * 60)
+        print("GENERATING CHARTS")
+        print("=" * 60)
+
+        # Get divergence log
+        divergences = self.signal_generator.get_divergence_log()
+
+        # Create visualizer
+        visualizer = ChartVisualizer(
+            self.nq_bars,
+            self.composite_bars,
+            divergences,
+            self.closed_trades
+        )
+
+        # Create summary chart
+        if viz_config.get('create_summary', True):
+            print("\nCreating summary chart...")
+            visualizer.create_summary_report(f'{output_dir}/summary.png')
+
+        # Create detailed charts for each divergence
+        if viz_config.get('create_divergence_details', True) and divergences:
+            bars_before = viz_config.get('bars_before_divergence', 100)
+            bars_after = viz_config.get('bars_after_divergence', 100)
+
+            print(f"\nCreating detailed charts for {len(divergences)} divergences...")
+            for i, div in enumerate(divergences):
+                timestamp_str = div['timestamp'].strftime("%Y%m%d_%H%M")
+                print(f"  [{i+1}/{len(divergences)}] {div['timestamp']} ({div['type']})")
+                visualizer.plot_divergence_detail(
+                    i,
+                    bars_before=bars_before,
+                    bars_after=bars_after,
+                    save_path=f'{output_dir}/div_{i+1:02d}_{timestamp_str}_{div["type"]}.png'
+                )
+
+        print(f"\n✓ All charts saved to: {output_dir}/")
+        print("=" * 60)

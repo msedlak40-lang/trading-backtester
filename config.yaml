@@ -51,3 +51,12 @@ debug:
   show_swing_updates: false    # Show swing high/low updates
   show_atr_bars: false         # Show all ATR bars detected
   show_zone_activations: false # Show zone activations
+
+# Visualization Settings
+visualization:
+  enabled: true                        # Generate charts
+  create_summary: true                 # Create summary chart
+  create_divergence_details: true      # Create detailed charts for each divergence
+  output_dir: "results/charts"         # Chart output directory
+  bars_before_divergence: 100          # Bars to show before divergence
+  bars_after_divergence: 100           # Bars to show after divergence
